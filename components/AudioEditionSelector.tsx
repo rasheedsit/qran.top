@@ -1,6 +1,6 @@
 import React from 'react';
-import type { QuranEdition } from '../types';
-import { SpeakerWaveIcon } from './icons';
+import type { QuranEdition } from '../types.ts';
+import { SpeakerWaveIcon } from './icons.tsx';
 
 interface AudioEditionSelectorProps {
     audioEditions: QuranEdition[];

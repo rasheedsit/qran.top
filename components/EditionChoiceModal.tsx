@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpenIcon, SearchIcon } from './icons';
+import { BookOpenIcon, SearchIcon } from './icons.tsx';
 
 interface EditionChoiceModalProps {
     onSelect: (editionIdentifier: string, dontShowAgain: boolean) => void;

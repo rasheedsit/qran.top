@@ -1,6 +1,6 @@
 import React from 'react';
-import type { SurahReference } from '../types';
-import { formatSurahNameForDisplay } from '../utils/text';
+import type { SurahReference } from '../types.ts';
+import { formatSurahNameForDisplay } from '../utils/text.ts';
 
 interface SurahListItemProps {
   surah: SurahReference;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import type { SurahReference } from '../types';
-import SurahListItem from './SurahListItem';
-import IndexItem from './IndexItem';
-import { BookOpenIcon, QueueListIcon, JuzOneIcon } from './icons';
+import type { SurahReference } from '../types.ts';
+import SurahListItem from './SurahListItem.tsx';
+import IndexItem from './IndexItem.tsx';
+import { BookOpenIcon, QueueListIcon, JuzOneIcon } from './icons.tsx';
 
 interface HomeViewProps {
   surahList: SurahReference[];

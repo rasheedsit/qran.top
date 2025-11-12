@@ -1,5 +1,5 @@
 import React from 'react';
-import { HomeIcon, BookmarkIcon, SparklesIcon, CogIcon, BookOpenIcon, ShieldCheckIcon, UserCircleIcon, UsersIcon, MicrophoneIcon } from './icons';
+import { HomeIcon, BookmarkIcon, SparklesIcon, CogIcon, BookOpenIcon, ShieldCheckIcon, UserCircleIcon, UsersIcon, MicrophoneIcon } from './icons.tsx';
 
 interface SidePanelProps {
     isOpen: boolean;

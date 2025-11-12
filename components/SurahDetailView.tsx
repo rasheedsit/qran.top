@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import type { SurahData, QuranEdition, QuranFont, SavedAyahItem, Ayah, FontSize, BrowsingMode } from '../types';
-import { BookmarkIcon, CopyIcon, PlayIcon, SpinnerIcon, CheckIcon, SearchIcon, SparklesIcon, ArrowLeftIcon, ArrowRightIcon } from './icons';
-import AudioEditionSelector from './AudioEditionSelector';
-import { formatSurahNameForDisplay } from '../utils/text';
+import type { SurahData, QuranEdition, QuranFont, SavedAyahItem, Ayah, FontSize, BrowsingMode } from '../types.ts';
+import { BookmarkIcon, CopyIcon, PlayIcon, SpinnerIcon, CheckIcon, SearchIcon, SparklesIcon, ArrowLeftIcon, ArrowRightIcon } from './icons.tsx';
+import AudioEditionSelector from './AudioEditionSelector.tsx';
+import { formatSurahNameForDisplay } from '../utils/text.ts';
 
 interface SurahDetailViewProps {
   surah: SurahData;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { Collections, SavedItem, Collection } from '../types';
-import { BookmarkIcon, ArrowLeftIcon, TrashIcon, SearchIcon, BookOpenIcon, UploadIcon, PencilIcon, CheckIcon } from './icons';
+import type { Collections, SavedItem, Collection } from '../types.ts';
+import { BookmarkIcon, ArrowLeftIcon, TrashIcon, SearchIcon, BookOpenIcon, UploadIcon, PencilIcon, CheckIcon } from './icons.tsx';
 
 interface SavedViewProps {
     collections: Collections;
@@ -196,7 +196,7 @@ const SavedView: React.FC<SavedViewProps> = ({ collections, collectionId, onDele
             <main>
                 {collectionList.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {/* FIX: Add explicit type to collection to fix property does not exist on type unknown error */}
+                        {/* FIX: Add explicit type to collection to fix property does not exist on type unknown */}
                         {collectionList.map((collection: Collection) => (
                             <a 
                                 key={collection.id}

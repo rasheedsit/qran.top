@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import type { Ayah, SurahData, QuranEdition, SavedAyahItem, SavedSearchItem, FontSize } from '../types';
-import { SearchIcon, CopyIcon, CheckIcon, ClearIcon, BackspaceIcon, BackspaceReverseIcon, BookmarkIcon, DocumentDuplicateIcon, DownloadIcon, PlayIcon, SpinnerIcon, PlusIcon } from './icons';
-import { normalizeArabicText, formatSurahNameForDisplay } from '../utils/text';
-import DiscussionSection from './DiscussionSection';
-import AudioEditionSelector from './AudioEditionSelector';
+import type { Ayah, SurahData, QuranEdition, SavedAyahItem, SavedSearchItem, FontSize } from '../types.ts';
+import { SearchIcon, CopyIcon, CheckIcon, ClearIcon, BackspaceIcon, BackspaceReverseIcon, BookmarkIcon, DocumentDuplicateIcon, DownloadIcon, PlayIcon, SpinnerIcon, PlusIcon } from './icons.tsx';
+import { normalizeArabicText, formatSurahNameForDisplay } from '../utils/text.ts';
+import DiscussionSection from './DiscussionSection.tsx';
+import AudioEditionSelector from './AudioEditionSelector.tsx';
 
 
 interface SearchViewProps {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { QuranFont, QuranEdition, FontSize, BrowsingMode } from '../types';
-import { ArrowLeftIcon, ArrowRightIcon, HomeIcon, TextSizeIcon, PlusIcon, MinusIcon, SparklesIcon, BookOpenIcon, CheckIcon, DocumentDuplicateIcon, QueueListIcon } from './icons';
+import type { QuranFont, QuranEdition, FontSize, BrowsingMode } from '../types.ts';
+import { ArrowLeftIcon, ArrowRightIcon, HomeIcon, TextSizeIcon, PlusIcon, MinusIcon, SparklesIcon, BookOpenIcon, CheckIcon, DocumentDuplicateIcon, QueueListIcon, ComputerDesktopIcon } from './icons.tsx';
 
 interface ToolboxProps {
     // Font Size

@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatSurahNameForDisplay } from '../utils/text';
+import { formatSurahNameForDisplay } from '../utils/text.ts';
 
 interface IndexItemProps {
   type: 'الجزء' | 'الحزب';

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 // FIX: Import Collection type to be used in type assertions.
-import type { SavedItem, Collections, Collection } from '../types';
-import { BookmarkIcon, ClearIcon, PlusIcon } from './icons';
+import type { SavedItem, Collections, Collection } from '../types.ts';
+import { BookmarkIcon, ClearIcon, PlusIcon } from './icons.tsx';
 
 interface SaveItemModalProps {
     item: SavedItem;

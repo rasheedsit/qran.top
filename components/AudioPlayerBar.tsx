@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import type { Ayah, QuranEdition } from '../types';
-import { PlayIcon, PauseIcon, ForwardIcon, BackwardIcon, XIcon, SpinnerIcon } from './icons';
+import type { Ayah, QuranEdition } from '../types.ts';
+import { PlayIcon, PauseIcon, ForwardIcon, BackwardIcon, XIcon, SpinnerIcon } from './icons.tsx';
 
 interface AudioPlayerBarProps {
     playlist: Ayah[];

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import type { Ayah, QuranEdition, SurahData, FontSize, QuranFont } from '../types';
-import { useTheme } from '../hooks/useTheme';
+import type { Ayah, QuranEdition, SurahData, FontSize, QuranFont } from '../types.ts';
+import { useTheme } from '../hooks/useTheme.ts';
 import { 
     SpinnerIcon, PlayIcon, PauseIcon, ForwardIcon, BackwardIcon, 
     HomeIcon,
     CogIcon, ClearIcon, CheckIcon, BookOpenIcon, TextSizeIcon, QueueListIcon,
     ComputerDesktopIcon, JuzOneIcon
-} from './icons';
-import AudioEditionSelector from './AudioEditionSelector';
+} from './icons.tsx';
+import AudioEditionSelector from './AudioEditionSelector.tsx';
 
 // --- Types ---
 type PlaybackMode = 'continuous' | 'single' | 'selection';
@@ -593,30 +593,50 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, fontSize, onFont
                     <div className="space-y-6">
                         <div>
                             <h3 className="text-md font-semibold text-text-secondary mb-2 flex items-center gap-2"><TextSizeIcon className="w-5 h-5"/> حجم الخط</h3>
-                            <div className="flex items-center justify-center gap-2 p-2 bg-surface-subtle rounded-lg">
-                                <button onClick={() => onFontSizeChange('sm')} className={`px-6 py-2 rounded-md font-bold text-sm ${fontSize === 'sm' ? 'bg-primary text-white' : 'hover:bg-surface-hover'}`}>صغير</button>
-                                <button onClick={() => onFontSizeChange('md')} className={`px-6 py-2 rounded-md font-bold text-md ${fontSize === 'md' ? 'bg-primary text-white' : 'hover:bg-surface-hover'}`}>متوسط</button>
-                                <button onClick={() => onFontSizeChange('lg')} className={`px-6 py-2 rounded-md font-bold text-lg ${fontSize === 'lg' ? 'bg-primary text-white' : 'hover:bg-surface-hover'}`}>كبير</button>
+                            <div className="flex items-center justify-center gap-2">
+                                <button
+                                    onClick={() => onFontSizeChange('sm')}
+                                    className={`p-3 w-20 h-14 flex items-center justify-center rounded-lg transition-colors ${fontSize === 'sm' ? 'bg-surface-active text-primary-text-strong' : 'bg-surface-subtle hover:bg-surface-hover'}`}
+                                    aria-pressed={fontSize === 'sm'}
+                                >
+                                    <span className="text-sm font-bold">صغير</span>
+                                </button>
+                                <button
+                                    onClick={() => onFontSizeChange('md')}
+                                    className={`p-3 w-20 h-14 flex items-center justify-center rounded-lg transition-colors ${fontSize === 'md' ? 'bg-surface-active text-primary-text-strong' : 'bg-surface-subtle hover:bg-surface-hover'}`}
+                                    aria-pressed={fontSize === 'md'}
+                                >
+                                    <span className="text-lg font-bold">متوسط</span>
+                                </button>
+                                <button
+                                    onClick={() => onFontSizeChange('lg')}
+                                    className={`p-3 w-20 h-14 flex items-center justify-center rounded-lg transition-colors ${fontSize === 'lg' ? 'bg-surface-active text-primary-text-strong' : 'bg-surface-subtle hover:bg-surface-hover'}`}
+                                    aria-pressed={fontSize === 'lg'}
+                                >
+                                    <span className="text-xl font-bold">كبير</span>
+                                </button>
                             </div>
                         </div>
-
                         <div>
-                            <h3 className="text-md font-semibold text-text-secondary mb-2">نوع الخط</h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <h3 className="text-md font-semibold text-text-secondary mb-2 flex items-center gap-2"><BookOpenIcon className="w-5 h-5"/> الخط</h3>
+                            <div className="space-y-1">
                                 {availableFonts.map(font => (
-                                    <button key={font.font_family} onClick={() => onFontChange(font.font_family)} className={`p-3 rounded-lg text-center ${selectedFont === font.font_family ? 'bg-surface-active ring-2 ring-primary' : 'bg-surface-subtle hover:bg-surface-hover'}`}>
+                                    <button key={font.font_family} onClick={() => onFontChange(font.font_family)}
+                                        className="w-full text-right p-2 rounded-md flex justify-between items-center text-text-primary hover:bg-surface-hover transition-colors">
                                         <span style={{ fontFamily: `"${font.font_family}", sans-serif` }}>{font.name}</span>
+                                        {selectedFont === font.font_family && <CheckIcon className="w-5 h-5 text-primary" />}
                                     </button>
                                 ))}
                             </div>
                         </div>
-
                         <div>
-                            <h3 className="text-md font-semibold text-text-secondary mb-2 flex items-center gap-2"><BookOpenIcon className="w-5 h-5"/> نسخة العرض</h3>
-                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                 {activeEditions.filter(e => e.format === 'text').map(edition => (
-                                    <button key={edition.identifier} onClick={() => onEditionChange(edition.identifier)} className={`p-3 rounded-lg text-center ${selectedEdition === edition.identifier ? 'bg-surface-active ring-2 ring-primary' : 'bg-surface-subtle hover:bg-surface-hover'}`}>
+                            <h3 className="text-md font-semibold text-text-secondary mb-2 flex items-center gap-2"><ComputerDesktopIcon className="w-5 h-5"/> نسخة العرض</h3>
+                            <div className="space-y-1">
+                                {activeEditions.map(edition => (
+                                    <button key={edition.identifier} onClick={() => onEditionChange(edition.identifier)}
+                                        className="w-full text-right p-2 rounded-md flex justify-between items-center text-text-primary hover:bg-surface-hover transition-colors">
                                         <span>{edition.name}</span>
+                                        {selectedEdition === edition.identifier && <CheckIcon className="w-5 h-5 text-primary" />}
                                     </button>
                                 ))}
                             </div>
@@ -624,14 +644,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose, fontSize, onFont
                     </div>
                 </div>
             </div>
-             <style>{`
-                @keyframes slide-up {
-                    from { transform: translateY(100%); }
-                    to { transform: translateY(0); }
-                }
-            `}</style>
         </div>
     );
-}
+};
 
 export default AudioKhatmiyahView;
