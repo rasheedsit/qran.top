@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- This base tag is crucial for deployment in subdirectories -->
+    <base href="./" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20x%3D%2250%22%20y%3D%2250%22%20font-size%3D%2290%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22central%22%20fill%3D%22%2322c55e%22%3E%DB%9E%3C/text%3E%3C/svg%3E" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QRAN.TOP</title>
+    
+    <!-- PWA Manifest & Theme Color -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#166534" />
+    
+    <!-- Meta Tags for Social Sharing (SEO & Thumbnails) -->
+    <meta name="description" content="مستكشف قرآني حديث وسريع. تصفح المصحف الشريف، وابحث عن أي كلمة أو عبارة بدقة، واكتشف التراكيب اللغوية بشكل تفاعلي. تجربة فريدة لدراسة وتدبر المصحف." />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="./" />
+    <meta property="og:title" content="QRAN.TOP - مستكشف المصحف الشريف" />
+    <meta property="og:description" content="مستكشف قرآني حديث وسريع. تصفح المصحف الشريف، وابحث عن أي كلمة أو عبارة بدقة، واكتشف التراكيب اللغوية بشكل تفاعلي. تجربة فريدة لدراسة وتدبر المصحف." />
+    <meta property="og:image" content="./thumbnail.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="./" />
+    <meta property="twitter:title" content="QRAN.TOP - مستكشف المصحف الشريف" />
+    <meta property="twitter:description" content="مستكشف قرآني حديث وسريع. تصفح المصحف الشريف، وابحث عن أي كلمة أو عبارة بدقة، واكتشف التراكيب اللغوية بشكل تفاعلي. تجربة فريدة لدراسة وتدبر المصحف." />
+    <meta property="twitter:image" content="./thumbnail.png" />
+    
+    <!-- Step 1: Immediately set theme class if needed to prevent FOUC. Must be first. -->
+    <script>
+      (function() {
+        const availableThemes = ['light', 'dark', 'fajr', 'duha', 'dhuhr', 'asr', 'maghrib', 'ghasaq', 'isha'];
+        const storedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        let themeToSet = 'light'; // New default light theme
+        
+        if (storedTheme && availableThemes.includes(storedTheme)) {
+            themeToSet = storedTheme;
+        } else if (prefersDark) {
+            themeToSet = 'dark'; // Default dark theme
+        }
+
+        const themeClasses = ['dark', ...availableThemes.map(t => `theme-${t}`)];
+        document.documentElement.classList.remove(...themeClasses);
+        
+        document.documentElement.classList.add(`theme-${themeToSet}`);
+        if (['dark', 'fajr', 'maghrib', 'ghasaq', 'isha'].includes(themeToSet)) {
+            document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+    
+    <!-- Step 2: Load the Tailwind CSS library. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Step 3: Configure Tailwind CSS. This must run *after* the library is loaded. -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'background': 'var(--color-background)',
+              'surface': 'var(--color-surface)',
+              'surface-hover': 'var(--color-surface-hover)',
+              'surface-active': 'var(--color-surface-active)',
+              'surface-subtle': 'var(--color-surface-subtle)',
+              'text-primary': 'var(--color-text-primary)',
+              'text-secondary': 'var(--color-text-secondary)',
+              'text-muted': 'var(--color-text-muted)',
+              'text-subtle': 'var(--color-text-subtle)',
+              'primary': 'var(--color-primary)',
+              'primary-hover': 'var(--color-primary-hover)',
+              'primary-text': 'var(--color-primary-text)',
+              'primary-text-strong': 'var(--color-primary-text-strong)',
+              'border-default': 'var(--color-border-default)',
+              'border-subtle': 'var(--color-border-subtle)',
+            }
+          }
+        }
+      }
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alkalami&family=Almarai&family=Amiri+Quran&family=Aref+Ruqaa&family=Aref+Ruqaa+Ink&family=Cairo&family=Cairo+Play&family=Changa&family=El+Messiri&family=Harmattan&family=Kufam&family=Lalezar&family=Lateef&family=Lemonada&family=Mada&family=Markazi+Text&family=Mirza&family=Noto+Kufi+Arabic:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Rakkas&family=Reem+Kufi&family=Reem+Kufi+Fun&family=Reem+Kufi+Ink&family=Scheherazade+New&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./index.css" />
+    <style>
+      @font-face {
+        font-family: 'Uthman';
+        src: url('./Uthman.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+      
+      /* --- THEME DEFINITIONS (9 THEMES) --- */
+      
+      /* ☀️ Light - "Classic" (Original Light) */
+      :root, .theme-light {
+        --color-background: #ffffff;
+        --color-surface: #f8f9fa;
+        --color-surface-hover: #e9ecef;
+        --color-surface-active: #dee2e6;
+        --color-surface-subtle: #f1f3f5;
+        --color-text-primary: #212529;
+        --color-text-secondary: #495057;
+        --color-text-muted: #6c757d;
+        --color-text-subtle: #868e96;
+        --color-primary: #22c55e;
+        --color-primary-hover: #16a34a;
+        --color-primary-text: #15803d;
+        --color-primary-text-strong: #166534;
+        --color-border-default: #dee2e6;
+        --color-border-subtle: #e9ecef;
+      }
+
+      /* 🌙 Dark - "Classic" (Original Dark) */
+      .theme-dark {
+        --color-background: #121212;
+        --color-surface: #1e1e1e;
+        --color-surface-hover: #2c2c2c;
+        --color-surface-active: #383838;
+        --color-surface-subtle: #222222;
+        --color-text-primary: #e0e0e0;
+        --color-text-secondary: #bdbdbd;
+        --color-text-muted: #9e9e9e;
+        --color-text-subtle: #757575;
+        --color-primary: #22c55e;
+        --color-primary-hover: #16a34a;
+        --color-primary-text: #4ade80;
+        --color-primary-text-strong: #86efac;
+        --color-border-default: #363636;
+        --color-border-subtle: #2a2a2a;
+      }
+
+      /* ☀️ Dhuhr - "Bauhaus" */
+      .theme-dhuhr {
+        --color-background: #ffffff;
+        --color-surface: #f8f9fa;
+        --color-surface-hover: #e9ecef;
+        --color-surface-active: #dee2e6;
+        --color-surface-subtle: #f1f3f5;
+        --color-text-primary: #000000;
+        --color-text-secondary: #212529;
+        --color-text-muted: #495057;
+        --color-text-subtle: #868e96;
+        --color-primary: #007bff;
+        --color-primary-hover: #0069d9;
+        --color-primary-text: #007bff;
+        --color-primary-text-strong: #0056b3;
+        --color-border-default: #dee2e6;
+        --color-border-subtle: #e9ecef;
+      }
+
+      /* 🌃 Isha - "Baroque" */
+      .theme-isha {
+        --color-background: #000000;
+        --color-surface: #1a1a1a;
+        --color-surface-hover: #2c2c2c;
+        --color-surface-active: #383838;
+        --color-surface-subtle: #222222;
+        --color-text-primary: #ffffff;
+        --color-text-secondary: #e0e0e0;
+        --color-text-muted: #bdbdbd;
+        --color-text-subtle: #9e9e9e;
+        --color-primary: #ffd700; /* Royal Gold */
+        --color-primary-hover: #e6c200;
+        --color-primary-text: #ffd700;
+        --color-primary-text-strong: #ffec80;
+        --color-border-default: #363636;
+        --color-border-subtle: #2a2a2a;
+      }
+      
+      /* ✨ Duha - "Art Nouveau" (Light) */
+      .theme-duha {
+        --color-background: #fdfaf6; /* Ivory */
+        --color-surface: #ffffff;
+        --color-surface-hover: #f7f2ec;
+        --color-surface-active: #f2eade;
+        --color-surface-subtle: #f9f5f0;
+        --color-text-primary: #556b2f; /* Dark Olive Green */
+        --color-text-secondary: #6B8E23;
+        --color-text-muted: #808000;
+        --color-text-subtle: #9ACD32;
+        --color-primary: #DAA520; /* Goldenrod */
+        --color-primary-hover: #B8860B;
+        --color-primary-text: #DAA520;
+        --color-primary-text-strong: #B8860B;
+        --color-border-default: #e5e0d7;
+        --color-border-subtle: #f0eae1;
+      }
+      
+      /* 🌇 Asr - "Renaissance" (Light) */
+      .theme-asr {
+        --color-background: #f5eeda; /* Papyrus */
+        --color-surface: #fff8e7;
+        --color-surface-hover: #faedd5;
+        --color-surface-active: #f3e2c3;
+        --color-surface-subtle: #f8f1e1;
+        --color-text-primary: #6d4c41; /* Burnt Umber */
+        --color-text-secondary: #8B4513;
+        --color-text-muted: #CD853F;
+        --color-text-subtle: #D2B48C;
+        --color-primary: #bf5700; /* Terracotta */
+        --color-primary-hover: #A0522D;
+        --color-primary-text: #bf5700;
+        --color-primary-text-strong: #A0522D;
+        --color-border-default: #e8dcc6;
+        --color-border-subtle: #f1e6d1;
+      }
+
+      /* 🌅 Fajr - "Impressionism" (Dark) */
+      .theme-fajr {
+        --color-background: #2c3e50; /* Midnight Blue */
+        --color-surface: #34495e;
+        --color-surface-hover: #4a637a;
+        --color-surface-active: #5c7891;
+        --color-surface-subtle: #3e566d;
+        --color-text-primary: #ecf0f1; /* Hazy White */
+        --color-text-secondary: #bdc3c7;
+        --color-text-muted: #95a5a6;
+        --color-text-subtle: #7f8c8d;
+        --color-primary: #e74c3c; /* Soft Red */
+        --color-primary-hover: #c0392b;
+        --color-primary-text: #e74c3c;
+        --color-primary-text-strong: #f1948a;
+        --color-border-default: #4a637a;
+        --color-border-subtle: #34495e;
+      }
+      
+      /* 🌆 Maghrib - "Romanticism" (Dark) */
+      .theme-maghrib {
+        --color-background: #4a235a; /* Deep Purple */
+        --color-surface: #5d3d6e;
+        --color-surface-hover: #715882;
+        --color-surface-active: #857296;
+        --color-surface-subtle: #674d78;
+        --color-text-primary: #ffe5d9; /* Pale Peach */
+        --color-text-secondary: #ffd8c7;
+        --color-text-muted: #fcc9b8;
+        --color-text-subtle: #f8bba9;
+        --color-primary: #ff7f50; /* Coral */
+        --color-primary-hover: #ff6a36;
+        --color-primary-text: #ff7f50;
+        --color-primary-text-strong: #ff9975;
+        --color-border-default: #715882;
+        --color-border-subtle: #5d3d6e;
+      }
+
+      /* 🌙 Ghasaq - "Nocturne" (Dark) */
+      .theme-ghasaq {
+        --color-background: #003366; /* Prussian Blue */
+        --color-surface: #0f4477;
+        --color-surface-hover: #1e5588;
+        --color-surface-active: #2d6699;
+        --color-surface-subtle: #1a4d80;
+        --color-text-primary: #d4e6f1; /* Moonlight Silver */
+        --color-text-secondary: #a9cce3;
+        --color-text-muted: #85b8d8;
+        --color-text-subtle: #7fb0d1;
+        --color-primary: #87ceeb; /* Sky Blue */
+        --color-primary-hover: #76bddb;
+        --color-primary-text: #87ceeb;
+        --color-primary-text-strong: #a0d8f0;
+        --color-border-default: #1e5588;
+        --color-border-subtle: #0f4477;
+      }
+
+      body {
+        font-family: 'Tajawal', sans-serif;
+        background-color: var(--color-background);
+        color: var(--color-text-primary);
+        transition: background-color 0.3s, color 0.3s;
+      }
+      
+      /* Base font styles */
+      .font-quran {
+        font-family: 'Tajawal', sans-serif;
+        font-weight: 700;
+      }
+      .font-bismillah {
+        font-family: 'Amiri Quran', serif;
+      }
+      .font-quran-title {
+        font-family: 'Amiri Quran', serif;
+        font-weight: 600;
+      }
+
+      /* Uthmani font size classes */
+      .uthmani-font.quran-text-sm { font-size: 1.5rem; line-height: 2.6; }
+      .uthmani-font.quran-text-md { font-size: 1.75rem; line-height: 2.8; }
+      .uthmani-font.quran-text-lg { font-size: 2.1rem; line-height: 3.0; }
+      
+      /* Imla'i font size classes */
+      .imlai-font.quran-text-sm { font-size: 1.4rem; line-height: 2.4; }
+      .imlai-font.quran-text-md { font-size: 1.6rem; line-height: 2.6; }
+      .imlai-font.quran-text-lg { font-size: 1.9rem; line-height: 2.8; }
+      
+      /* Crystalline Gradient and Shine Animation */
+      .crystalline-gradient {
+        background: linear-gradient(
+          -45deg,
+          #1e90ff, /* Dodger Blue */
+          #9400d3, /* Dark Violet */
+          #ff1493, /* Deep Pink/Red */
+          #ffd700  /* Gold/Yellow */
+        );
+        background-size: 400% 400%;
+      }
+
+      @keyframes shine-effect {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .animate-shine {
+        animation: shine-effect 5s ease infinite;
+      }
+      
+      @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .animate-fade-in {
+        animation: fade-in 0.5s ease-out;
+      }
+
+      /* Highlight Pulse Animation */
+      @keyframes highlight-pulse {
+        0% { background-color: rgba(253, 224, 71, 0.6); } /* bg-yellow-300 with opacity */
+        50% { background-color: rgba(253, 224, 71, 0.2); }
+        100% { background-color: rgba(253, 224, 71, 0.6); }
+      }
+      html.dark .animate-highlight-pulse {
+        animation-name: highlight-pulse-dark;
+      }
+      @keyframes highlight-pulse-dark {
+        0% { background-color: rgba(250, 204, 21, 0.3); } /* bg-yellow-400 with opacity */
+        50% { background-color: rgba(250, 204, 21, 0.1); }
+        100% { background-color: rgba(250, 204, 21, 0.3); }
+      }
+      .animate-highlight-pulse {
+        animation: highlight-pulse 1.5s ease-in-out 2; /* Pulse for 3 seconds total */
+      }
+
+      @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(-360deg); }
+      }
+      .animate-spin-slow {
+        animation: spin-slow 3s linear infinite;
+      }
+      
+      @keyframes pulse-mic {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      .animate-pulse-mic {
+        animation: pulse-mic 1.5s ease-in-out infinite;
+      }
+
+      /* --- Mushaf Page Styles (Theme-Aware) --- */
+      .mushaf-page {
+        border: 10px solid;
+        border-image-slice: 10;
+        border-image-repeat: round;
+        padding: 2rem 3rem;
+        position: relative;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        transition: background-color 0.3s, border-image-source 0.3s;
+      }
+
+      /* Theme: Light */
+      .theme-light .mushaf-page {
+        background-color: #f8f9fa; /* slightly off-white */
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%23166534' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%23166534' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%23166534' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%23166534' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+      /* Theme: Dark */
+      .theme-dark .mushaf-page {
+        background-color: #1e1e1e;
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%234ade80' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%234ade80' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%234ade80' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%234ade80' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+      /* Theme: Dhuhr */
+      .theme-dhuhr .mushaf-page {
+        background-color: #f8f9fa;
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%230056b3' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%230056b3' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%230056b3' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%230056b3' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+      /* Theme: Isha */
+      .theme-isha .mushaf-page {
+        background-color: #1a1a1a;
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%23ffd700' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%23ffd700' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%23ffd700' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%23ffd700' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+      /* Theme: Duha */
+      .theme-duha .mushaf-page {
+        background-color: #fdfaf6;
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%23B8860B' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%23B8860B' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%23B8860B' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%23B8860B' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+      /* Theme: Asr */
+      .theme-asr .mushaf-page {
+        background-color: #f5eeda;
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%23A0522D' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%23A0522D' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%23A0522D' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%23A0522D' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+      /* Theme: Fajr */
+      .theme-fajr .mushaf-page {
+        background-color: #34495e;
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%23f1948a' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%23f1948a' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%23f1948a' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%23f1948a' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+      /* Theme: Maghrib */
+      .theme-maghrib .mushaf-page {
+        background-color: #5d3d6e;
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%23ff9975' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%23ff9975' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%23ff9975' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%23ff9975' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+      /* Theme: Ghasaq */
+      .theme-ghasaq .mushaf-page {
+        background-color: #0f4477;
+        border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Cpath d='M15 0 C 15 15, 0 15, 0 15 L 0 0 Z' fill='none' stroke='%23a0d8f0' stroke-width='1'/%3E%3Cpath d='M15 0 C 15 15, 30 15, 30 15 L 30 0 Z' fill='none' stroke='%23a0d8f0' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 0 15, 0 15 L 0 30 Z' fill='none' stroke='%23a0d8f0' stroke-width='1'/%3E%3Cpath d='M15 30 C 15 15, 30 15, 30 15 L 30 30 Z' fill='none' stroke='%23a0d8f0' stroke-width='1'/%3E%3C/svg%3E");
+      }
+
+
+      .mushaf-header, .mushaf-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'Amiri Quran', serif;
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+      }
+      .mushaf-header { margin-bottom: 1rem; }
+      .mushaf-footer { margin-top: 1rem; text-align: center; justify-content: center; }
+
+      .ayah-marker {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.8em;
+        height: 1.8em;
+        border-radius: 50%;
+        border: 2px solid var(--color-primary-text-strong);
+        background-color: transparent;
+        vertical-align: middle;
+        font-family: 'Tajawal', sans-serif;
+        font-weight: bold;
+        font-size: 0.7em;
+        color: var(--color-text-primary);
+        margin: 0 0.25em;
+        line-height: 1;
+        position: relative;
+      }
+      .ayah-marker::before {
+        content: '';
+        position: absolute;
+        inset: 2px;
+        border: 1px solid var(--color-primary);
+        border-radius: 50%;
+      }
+
+      .hizb-marker {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border-default);
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+        border-radius: 8px;
+        font-family: 'Amiri Quran', serif;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      }
+      .hizb-marker.right { right: 0.5rem; }
+      .hizb-marker.left { left: 0.5rem; }
+      
+      /* --- Static Loader Styles --- */
+      .static-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: var(--color-background);
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+      }
+      .loader-symbol-container {
+        position: relative;
+        font-size: 8rem;
+        line-height: 1;
+      }
+      .loader-symbol-bg {
+        color: #e5e7eb;
+      }
+      .dark .loader-symbol-bg {
+        color: #374151;
+      }
+      .loader-symbol-fg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(-45deg, #1e90ff, #9400d3, #ff1493, #ffd700);
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: shine-effect 5s ease infinite, fill-effect 1.8s ease-in-out forwards;
+      }
+
+      @keyframes fill-effect {
+        from { clip-path: inset(100% 0 0 0); }
+        to { clip-path: inset(0% 0 0 0); }
+      }
+      .loader-text {
+        font-size: 1.125rem;
+        color: var(--color-text-muted);
+        margin-top: 1rem;
+      }
+    </style>
+  
+  <!-- Load Firebase SDKs *before* the app script -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
+
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "@/": "./"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root">
+      <!-- Static loader to prevent blank screen. React will replace this. -->
+      <div class="static-loader">
+        <div class="loader-symbol-container">
+          <div class="loader-symbol-bg">۞</div>
+          <div class="loader-symbol-fg">۞</div>
+        </div>
+        <p class="loader-text">
+          جاري تحميل بيانات المصحف الشريف...
+        </p>
+      </div>
+    </div>
+    
+    <!-- App Scripts -->
+    <script type="module" src="./index.tsx"></script>
+
+  </body>
+</html>

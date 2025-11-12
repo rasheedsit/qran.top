@@ -1,0 +1,181 @@
+
+# QRAN.TOP - Programming Guide
+
+## 1. Project Overview
+
+**Purpose:** QRAN.TOP is a modern, fast, and feature-rich Quran explorer Progressive Web App (PWA). It is designed for deep study (tadabbur) and linguistic analysis, combining a beautiful reading experience with powerful search capabilities.
+
+**Core Technologies:**
+- **Framework:** React
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Backend & Database:** Firebase (Firestore) for comments, settings, and real-time features.
+- **Build/Dev:** The application is built to run directly in the browser using ES modules and an `importmap`. There is no traditional build step (like Webpack or Vite).
+
+---
+
+## 2. Architecture & Core Concepts
+
+### 2.1. Dual Quran Editions Philosophy
+
+This is the most fundamental concept of the app. To achieve both an authentic reading experience and a powerful search engine, the app relies on two primary Quran editions:
+
+1.  **`quran-uthmani`**: The Quran text in the authentic Uthmani script, complete with all diacritics and vowellings.
+    - **Use Case:** Used exclusively for displaying Quran text in the `SurahDetailView` to provide a reading experience identical to a printed Mushaf.
+    - **Source:** Initially loaded from a static JSON file (`quran-uthmani.json`) for speed, but can be managed via Firestore.
+
+2.  **`quran-simple-clean`**: The Quran text in a simplified, modern script with all diacritics, tashkeel, and most Quranic marks removed.
+    - **Use Case:** This is the "search engine" text. All user search queries are performed against this normalized text, ensuring that variations in script or diacritics do not affect search results. It is also used as the data source for search result displays.
+    - **Source:** Loaded from a static JSON file (`quran-simple-clean.json`).
+
+### 2.2. State Management
+
+The application uses a centralized state management pattern within the main `App.tsx` component, leveraging standard React hooks.
+
+- **`App.tsx` as the Single Source of Truth:** This component holds the most critical pieces of global state, including:
+    - `allQuranData`: An object containing all loaded Quran editions, keyed by their identifier.
+    - `currentPath`: Manages the application's routing based on the URL hash.
+    - `playbackInfo`: State for the global audio player.
+    - User settings (`selectedFontFamily`, `fontSize`, `activeEditions`, etc.).
+
+- **Local Storage:** Used for persisting user preferences across sessions.
+    - `qran_app_edition`: The identifier of the currently selected display edition.
+    - `qran_app_active_editions`: A JSON array of the editions the user has chosen to activate.
+    - `qran_app_selected_font`: The user's preferred font family.
+    - `qran_app_font_size`: The user's preferred font size ('sm', 'md', 'lg').
+    - `qran_app_audio_edition`: The identifier for the selected audio reciter.
+    - `qran_app_collections`: The user's entire "Tadabbur Notebook".
+
+- **Custom Hooks:** Logic is encapsulated in custom hooks for reusability and separation of concerns.
+    - `useNotebook.ts`: Manages all logic for the Tadabbur Notebook (creating/deleting collections, adding/removing items, notes, and import/export via Firebase).
+    - `useTheme.ts`: Manages the light/dark theme, including persisting to local storage and respecting the user's OS preference.
+    - `useRandomPattern.ts`: Selects a random, subtle Islamic geometric pattern to display as the background for content cards (only in light mode).
+
+### 2.3. Data Flow
+
+1.  **App Initialization (`App.tsx`):**
+    - The app starts by fetching critical config from Firestore: `qran_fonts` and `qran_editions`. It uses hardcoded defaults (`DEFAULT_FONTS`, `DEFAULT_EDITIONS`) as a fallback if Firebase is unreachable.
+    - It then immediately initiates the fetch for the two primary Quran editions (`quran-uthmani`, `quran-simple-clean`) from static JSON files hosted alongside the app. This ensures the core functionality is available as quickly as possible.
+    - A `LoadingScreen` is displayed until this critical data is loaded.
+
+2.  **On-Demand Data Loading:**
+    - When a user selects a new display edition (e.g., a Tafsir or English translation) that hasn't been loaded yet, `fetchCustomEditionData` is called.
+    - This function intelligently determines the correct API URL based on the edition's `sourceApi` property (`alquran.cloud`, `fawazahmed0`, or a custom URL).
+    - The fetched data is processed (including a Bismillah cleaning step) and added to the `allQuranData` state object.
+    - A `TopProgressBar` indicates loading activity.
+
+### 2.4. Routing
+
+The app uses a simple hash-based routing system, managed by listening to the `hashchange` event in `App.tsx`. The `currentPath` state variable is updated, which triggers a re-render of the `renderContent` function.
+
+- **`#/`**: Home page (Surah index).
+- **`#/surah/{number}`**: Displays a specific Surah.
+- **`#/search/{query}`**: Displays search results for a text query.
+- **`#/search/number/{number}`**: Displays results for an ayah number search.
+- **`#/settings`**: The settings page.
+- **`#/saved`**: The Tadabbur Notebook homepage.
+- **`#/saved/{collectionId}`**: A specific collection in the notebook.
+- **`#/comments`**: The trending discussions view (word cloud).
+- **`#/khatmiyah`**: The group Quran reading feature homepage.
+- **`#/khatmiyah/{id}`**: A specific group reading session.
+- **`#/admin`**: The admin panel (accessed via a secret click sequence).
+
+---
+
+## 3. Component Breakdown
+
+### 3.1. Main Views
+
+- **`App.tsx`**: The orchestrator. It contains the main router logic (`renderContent`), header, and initializes all data fetching and state.
+- **`SurahDetailView.tsx`**: Renders a full Surah. Key features include:
+    - Clicking a word triggers a search.
+    - Clicking an ayah number `﴿﴾` opens a popover with actions (Save, Copy, Search).
+    - Scrolls to a highlighted ayah if specified in the URL (`?ayah=...`).
+    - Integrates with the audio player controls.
+- **`SearchView.tsx`**: A complex component that handles the entire search experience.
+    - Displays results, highlighting the query.
+    - Provides "neighboring word" suggestions to build compound searches.
+    - Allows for exact matching.
+    - Features a discussion section (`DiscussionSection.tsx`) for community interaction on the search topic.
+    - Provides tools to export or play all results.
+- **`SettingsView.tsx`**: A tabbed interface for managing:
+    - **Fonts:** A visual gallery of available fonts.
+    - **Editions:** A card-based manager to add/remove Quran editions, tafsirs, and translations.
+    - **Notebook Sync:** The UI for the import/export feature.
+    - **Export Format:** A template editor for customizing the text output of search results.
+- **`SavedView.tsx`**: Displays the user's Tadabbur Notebook, allowing navigation into collections and editing notes on saved items.
+- **`KhatmiyahView.tsx`**: The UI for the group reading feature. It has two main states: a home view for creating/joining sessions and a dashboard view for participating in an active session.
+- **`AdminView.tsx`**: A password-protected panel for site administrators to manage user-generated content (comments) and application configuration (fonts, sources).
+
+### 3.2. UI & Layout Components
+
+- **`SidePanel.tsx`**: The main slide-out navigation menu, providing quick access to all major app sections and informational pages.
+- **`Toolbox.tsx`**: A floating toolbar that appears on the `SurahDetailView` and `SearchView`. It provides quick access to change font size, font family, and the current display edition. It intelligently hides on scroll down and reappears on scroll up.
+- **`AudioPlayerBar.tsx`**: The persistent bar at the bottom of the screen that appears when audio is playing. It shows the current reciter, surah, and provides playback controls.
+- **`SurahListItem.tsx`**: The card component for each surah on the home page.
+- **`LoadingScreen.tsx`**: An animated loading screen with a filling logo and percentage counter, shown on initial app load.
+
+### 3.3. Specialized & Data Components
+
+- **`DiscussionSection.tsx`**: Wrapper component that handles the logic for opening the discussion and passing the correct `topicId` to the comments components.
+- **`comments/*`**: A suite of components for the anonymous commenting system.
+    - `CommentForm.tsx`: The input form for submitting new comments/replies.
+    - `CommentsList.tsx`: Fetches and renders the comment tree for a given topic from Firestore.
+    - `Comment.tsx`: Renders a single comment and its replies, and handles actions like reporting.
+- **`firebase.ts`**: Initializes the Firebase connection and exports the `db` (Firestore) instance. This is the central point for all database interactions.
+- **`types.ts`**: Contains all TypeScript interfaces for the application's data structures (`Surah`, `Ayah`, `QuranEdition`, `Comment`, etc.), ensuring type safety across the project.
+- **`utils/text.ts`**: Contains utility functions, most importantly `normalizeArabicText`, which is crucial for the search functionality.
+
+---
+
+## 4. Key Logic & Algorithms
+
+### 4.1. Search Algorithm (`performSearch` in `App.tsx`)
+
+1.  **Normalization:** The user's query and the Quran text are normalized using `normalizeArabicText` to remove diacritics and unify character variants (e.g., all forms of 'alif' become one).
+2.  **Edition Selection:**
+    - If the query contains diacritics, the search is first attempted against the `quran-uthmani` edition for a precise match.
+    - If no results are found, or if the query has no diacritics, it falls back to searching the `quran-simple-clean` edition. This provides the best of both worlds: precision when needed, and breadth otherwise.
+3.  **Verse Finder (Advanced Heuristic):**
+    - For long queries (more than 4 words with diacritics), a special "Verse Finder" logic is triggered.
+    - It creates a "fingerprint" of the query (a continuous string of letters with no spaces or diacritics).
+    - It then iteratively searches for this fingerprint within the fingerprints of all ayahs, adding one word at a time to the query.
+    - This heuristic is designed to quickly narrow down results to a single unique ayah, even if the user's input is a partial verse.
+4.  **Results:** The function returns the matching ayahs and the edition that was successfully used for the search (`finalSearchEdition`).
+
+### 4.2. Khatmiyah Logic (`KhatmiyahView.tsx`)
+
+- **State Management:** The state of each Khatmah is stored in a single Firestore document. The `juz_status` field is a map of 30 objects, each representing the state of a Juz.
+- **Transactions:** Firestore transactions are used for critical operations like reserving a Juz. This ensures that two users cannot reserve the same Juz simultaneously (atomic updates).
+- **Anti-Spam:** A local storage-based tracker (`KHATMIYAH_ACTION_TRACKER_KEY`) limits the number of creations, reservations, and completions a single user can perform per day to prevent abuse.
+- **Automatic Cleanup:** A cleanup function (`deleteInactiveKhatmahs`) is run periodically to remove old, inactive Khatmahs from the database to keep it lean.
+
+---
+
+## 5. How to Extend the App
+
+### 5.1. Adding a New Quran Edition/Tafsir
+
+1.  **Add to Firestore:** The preferred method is to add a new document to the `qran_editions` collection in the Firestore database with the correct schema (`QuranEdition` type).
+2.  **Add to `DEFAULT_EDITIONS` (Fallback):** For core editions or if Firebase is not used, add the edition object to the `DEFAULT_EDITIONS` array in `App.tsx`.
+3.  **Provide the Data:** Ensure the data for the new edition is available at the URL specified by its `sourceApi` and `identifier`. For `fawazahmed0`, this is automatic. For `alquran.cloud`, it requires the API to support that identifier. For custom URLs, you must host the JSON file yourself.
+
+### 5.2. Adding a New Font
+
+1.  **Add to Firestore:** Add a new document to the `qran_fonts` collection with the schema (`QuranFont` type), including the `url` to the font file (e.g., from Google Fonts).
+2.  **Add to `DEFAULT_FONTS` (Fallback):** Add the font object to the `DEFAULT_FONTS` array in `App.tsx`.
+3.  The app will automatically create a `<link>` tag to load the font CSS from the specified URL.
+
+### 5.3. Adding a New Page/View
+
+1.  Create your new component file (e.g., `components/NewView.tsx`).
+2.  In `App.tsx`, add a new route handler within the `renderContent` function.
+    ```tsx
+    // Inside renderContent() in App.tsx
+    if (pathParts[0] === 'new-view') {
+        return <NewView />;
+    }
+    ```
+3.  Add a link to the new view in the `SidePanel.tsx` component.
+
+---
