@@ -539,6 +539,9 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
+  
+  <!-- Add Babel for in-browser JSX/TSX transpilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <script type="importmap">
 {
@@ -565,8 +568,8 @@
       </div>
     </div>
     
-    <!-- App Scripts -->
-    <script type="module" src="./index.tsx"></script>
+    <!-- App Scripts: Use text/babel for transpilation -->
+    <script type="text/babel" data-type="module" src="./index.tsx"></script>
 
   </body>
 </html>
